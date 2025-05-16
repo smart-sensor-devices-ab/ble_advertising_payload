@@ -106,80 +106,32 @@
       </ul>
 
       <div class="tab-content mt-3" id="modeTabsContent">
-        <!-- Replace this section in your <body> where Builder Mode UI exists -->
         <div
           class="tab-pane fade show active"
           id="builder"
           role="tabpanel"
           aria-labelledby="builder-tab"
         >
-          <label for="type">Type (1 byte)</label>
-          <select class="form-select" id="type">
-            <option value="01">01 - Flags</option>
-            <option value="02">02 - Incomplete List of 16-bit UUIDs</option>
-            <option value="03">03 - Complete List of 16-bit UUIDs</option>
-            <option value="04">04 - Incomplete List of 32-bit UUIDs</option>
-            <option value="05">05 - Complete List of 32-bit UUIDs</option>
-            <option value="06">06 - Incomplete List of 128-bit UUIDs</option>
-            <option value="07">07 - Complete List of 128-bit UUIDs</option>
-            <option value="08">08 - Shortened Local Name</option>
-            <option value="09">09 - Complete Local Name</option>
-            <option value="0A">0A - Tx Power Level</option>
-            <option value="0D">0D - Class of Device</option>
-            <option value="0E">0E - Simple Pairing Hash C-192</option>
-            <option value="0F">0F - Simple Pairing Randomizer R-192</option>
-            <option value="10">10 - Device ID / TK Value</option>
-            <option value="11">11 - OOB Flags</option>
-            <option value="12">12 - Conn Interval Range</option>
-            <option value="14">14 - 16-bit UUID Solicitation</option>
-            <option value="15">15 - 128-bit UUID Solicitation</option>
-            <option value="16">16 - Service Data (16-bit UUID)</option>
-            <option value="17">17 - Public Target Address</option>
-            <option value="18">18 - Random Target Address</option>
-            <option value="19">19 - Appearance</option>
-            <option value="1A">1A - Advertising Interval</option>
-            <option value="1B">1B - BLE Address</option>
-            <option value="1C">1C - LE Role</option>
-            <option value="1D">1D - Pairing Hash C-256</option>
-            <option value="1E">1E - Pairing Randomizer R-256</option>
-            <option value="1F">1F - 32-bit UUID Solicitation</option>
-            <option value="20">20 - Service Data (32-bit UUID)</option>
-            <option value="21">21 - Service Data (128-bit UUID)</option>
-            <option value="22">22 - SC Confirm Value</option>
-            <option value="23">23 - SC Random Value</option>
-            <option value="24">24 - URI</option>
-            <option value="25">25 - Indoor Positioning</option>
-            <option value="26">26 - Transport Discovery</option>
-            <option value="27">27 - LE Features</option>
-            <option value="28">28 - Channel Map Update</option>
-            <option value="29">29 - Mesh PB-ADV</option>
-            <option value="2A">2A - Mesh Message</option>
-            <option value="2B">2B - Mesh Beacon</option>
-            <option value="2C">2C - BIGInfo</option>
-            <option value="2D">2D - Broadcast Code</option>
-            <option value="2E">2E - Resolvable Set ID</option>
-            <option value="2F">2F - Long Adv Interval</option>
-            <option value="30">30 - Broadcast Name</option>
-            <option value="31">31 - Encrypted Adv Data</option>
-            <option value="32">32 - PA Response Timing</option>
-            <option value="34">34 - ESL</option>
-            <option value="3D">3D - 3D Info</option>
-            <option value="FF" selected>FF - Manufacturer Specific Data</option>
-          </select>
+          <label for="length"
+            >Length (1 byte) (ex.07 = 1 (type) + 6 (data: manufacturer ID + your
+            payload))
+          </label>
+          <input
+            class="form-control"
+            type="text"
+            id="length"
+            placeholder="e.g., 07"
+          />
 
-          <small class="form-text text-muted"
-            >Common values: FF = Manufacturer Specific, 09 = Complete Local
-            Name</small
-          >
+          <label for="type">Type (default FF = Manufacturer Specific)</label>
+          <input class="form-control" type="text" id="type" value="FF" />
 
-          <label for="manufacturer"
-            >Manufacturer ID (2 bytes - big endian)</label
-          >
+          <label for="manufacturer">Manufacturer ID (2 bytes)</label>
           <input
             class="form-control"
             type="text"
             id="manufacturer"
-            placeholder="e.g., 075B (Smart Sensor Devices)"
+            placeholder="e.g., 5B07"
           />
 
           <label for="custom">Custom Data (Hex pairs)</label>
@@ -248,18 +200,15 @@
         let finalPayload = '';
 
         if (activeTab === 'builder') {
+          const length = document.getElementById('length').value.trim();
           const type = document.getElementById('type').value.trim();
-          const custom = document.getElementById('custom').value.trim();
-          let manufacturer = document
+          const manufacturer = document
             .getElementById('manufacturer')
             .value.trim();
+          const custom = document.getElementById('custom').value.trim();
 
-          if (!type) {
-            alert('Please enter a type.');
-            return;
-          }
-          if (type.toUpperCase() === 'FF' && !manufacturer) {
-            alert('Manufacturer ID required when type is FF.');
+          if (!length || !type || !manufacturer) {
+            alert('Please fill in all builder fields.');
             return;
           }
 
@@ -268,20 +217,11 @@
             return;
           }
 
-          // Convert big endian to little endian if Manufacturer ID is provided
-          if (type.toUpperCase() === 'FF') {
-            manufacturer = manufacturer
-              .match(/.{1,2}/g)
-              .reverse()
-              .join('');
-          }
-
-          // Build final hex array
-          let dataHex = type + (manufacturer || '') + custom;
-          const lengthByte = (dataHex.length / 2).toString(16).padStart(2, '0');
-
           const hexToColon = (hex) => hex.match(/.{1,2}/g).join(':');
-          finalPayload = `${hexToColon(lengthByte)}:${hexToColon(dataHex)}`;
+          finalPayload =
+            `${hexToColon(length)}:${hexToColon(type)}:${hexToColon(
+              manufacturer
+            )}` + (custom ? `:${hexToColon(custom)}` : '');
         } else if (activeTab === 'raw') {
           finalPayload = document.getElementById('rawInput').value.trim();
           if (!/^([0-9a-fA-F]{2}:)*[0-9a-fA-F]{2}$/.test(finalPayload)) {
@@ -335,19 +275,6 @@
       function delay(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
       }
-      // Auto-disable Manufacturer ID if Type ≠ FF
-      document.getElementById('type').addEventListener('input', function () {
-        const typeVal = this.value.trim().toUpperCase();
-        const manuField = document.getElementById('manufacturer');
-        if (typeVal !== 'FF') {
-          manuField.disabled = true;
-          manuField.style.backgroundColor = '#eee';
-          manuField.value = '';
-        } else {
-          manuField.disabled = false;
-          manuField.style.backgroundColor = '';
-        }
-      });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
