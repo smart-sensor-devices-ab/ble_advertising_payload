@@ -367,7 +367,10 @@
 
           // Build final hex array
           let dataHex = type + (manufacturer || '') + custom;
-          const lengthByte = (dataHex.length / 2).toString(16).padStart(2, '0');
+          const lengthByte = (dataHex.length / 2)
+            .toString(16)
+            .padStart(2, '0')
+            .toUpperCase();
 
           const hexToColon = (hex) => hex.match(/.{1,2}/g).join(':');
           finalPayload = `${hexToColon(lengthByte)}:${hexToColon(dataHex)}`;
