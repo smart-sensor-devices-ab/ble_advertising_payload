@@ -83,161 +83,212 @@
         </p>
       </div>
       <hr />
-      <p>
-        Connect to your <strong>BleuIO USB dongle</strong> and send advertising
-        packets using either structured inputs or full raw hex format.
-      </p>
+      <div class="row">
+        <div class="col-md-8 border shadow rounded">
+          <p>
+            Connect to your <strong>BleuIO USB dongle</strong> and send
+            advertising packets using either structured inputs or full raw hex
+            format.
+          </p>
 
-      <button id="connectBtn" class="btn btn-success mb-3">
-        Connect to BleuIO
-      </button>
-      <span id="status" class="ms-2">Not connected</span>
-
-      <ul class="nav nav-tabs" id="modeTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link active"
-            id="builder-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#builder"
-            type="button"
-            role="tab"
-          >
-            Builder Mode
+          <button id="connectBtn" class="btn btn-success mb-3">
+            Connect to BleuIO
           </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="raw-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#raw"
-            type="button"
-            role="tab"
-          >
-            Raw Mode
+          <span id="status" class="ms-2">Not connected</span>
+
+          <ul class="nav nav-tabs" id="modeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="builder-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#builder"
+                type="button"
+                role="tab"
+              >
+                Builder Mode
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="raw-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#raw"
+                type="button"
+                role="tab"
+              >
+                Raw Mode
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content mt-3" id="modeTabsContent">
+            <!-- Replace this section in your <body> where Builder Mode UI exists -->
+            <div
+              class="tab-pane fade show active"
+              id="builder"
+              role="tabpanel"
+              aria-labelledby="builder-tab"
+            >
+              <label for="type">Type (1 byte)</label>
+              <select class="form-select" id="type">
+                <option value="01">01 - Flags</option>
+                <option value="02">02 - Incomplete List of 16-bit UUIDs</option>
+                <option value="03">03 - Complete List of 16-bit UUIDs</option>
+                <option value="04">04 - Incomplete List of 32-bit UUIDs</option>
+                <option value="05">05 - Complete List of 32-bit UUIDs</option>
+                <option value="06">
+                  06 - Incomplete List of 128-bit UUIDs
+                </option>
+                <option value="07">07 - Complete List of 128-bit UUIDs</option>
+                <option value="08">08 - Shortened Local Name</option>
+                <option value="09">09 - Complete Local Name</option>
+                <option value="0A">0A - Tx Power Level</option>
+                <option value="0D">0D - Class of Device</option>
+                <option value="0E">0E - Simple Pairing Hash C-192</option>
+                <option value="0F">0F - Simple Pairing Randomizer R-192</option>
+                <option value="10">10 - Device ID / TK Value</option>
+                <option value="11">11 - OOB Flags</option>
+                <option value="12">12 - Conn Interval Range</option>
+                <option value="14">14 - 16-bit UUID Solicitation</option>
+                <option value="15">15 - 128-bit UUID Solicitation</option>
+                <option value="16">16 - Service Data (16-bit UUID)</option>
+                <option value="17">17 - Public Target Address</option>
+                <option value="18">18 - Random Target Address</option>
+                <option value="19">19 - Appearance</option>
+                <option value="1A">1A - Advertising Interval</option>
+                <option value="1B">1B - BLE Address</option>
+                <option value="1C">1C - LE Role</option>
+                <option value="1D">1D - Pairing Hash C-256</option>
+                <option value="1E">1E - Pairing Randomizer R-256</option>
+                <option value="1F">1F - 32-bit UUID Solicitation</option>
+                <option value="20">20 - Service Data (32-bit UUID)</option>
+                <option value="21">21 - Service Data (128-bit UUID)</option>
+                <option value="22">22 - SC Confirm Value</option>
+                <option value="23">23 - SC Random Value</option>
+                <option value="24">24 - URI</option>
+                <option value="25">25 - Indoor Positioning</option>
+                <option value="26">26 - Transport Discovery</option>
+                <option value="27">27 - LE Features</option>
+                <option value="28">28 - Channel Map Update</option>
+                <option value="29">29 - Mesh PB-ADV</option>
+                <option value="2A">2A - Mesh Message</option>
+                <option value="2B">2B - Mesh Beacon</option>
+                <option value="2C">2C - BIGInfo</option>
+                <option value="2D">2D - Broadcast Code</option>
+                <option value="2E">2E - Resolvable Set ID</option>
+                <option value="2F">2F - Long Adv Interval</option>
+                <option value="30">30 - Broadcast Name</option>
+                <option value="31">31 - Encrypted Adv Data</option>
+                <option value="32">32 - PA Response Timing</option>
+                <option value="34">34 - ESL</option>
+                <option value="3D">3D - 3D Info</option>
+                <option value="FF" selected>
+                  FF - Manufacturer Specific Data
+                </option>
+              </select>
+
+              <small class="form-text text-muted"
+                >Common values: FF = Manufacturer Specific, 09 = Complete Local
+                Name</small
+              >
+
+              <label for="manufacturer"
+                >Manufacturer ID (2 bytes - big endian)</label
+              >
+              <input
+                class="form-control"
+                type="text"
+                id="manufacturer"
+                placeholder="e.g., 075B (Smart Sensor Devices)"
+              />
+
+              <label for="custom">Custom Data (Hex pairs)</label>
+              <input
+                class="form-control"
+                type="text"
+                id="custom"
+                placeholder="e.g., 01020304"
+              />
+              <label class="mt-3">Advertising Packet Preview:</label>
+              <pre id="preview" class="bg-light p-2 border rounded">--</pre>
+            </div>
+
+            <div
+              class="tab-pane fade"
+              id="raw"
+              role="tabpanel"
+              aria-labelledby="raw-tab"
+            >
+              <label for="rawInput"
+                >Full advertising payload (colon-separated hex)</label
+              >
+              <input
+                class="form-control"
+                type="text"
+                id="rawInput"
+                placeholder="e.g., 07:FF:5B:07:01:02:03:04"
+              />
+            </div>
+          </div>
+
+          <button id="sendBtn" class="btn btn-primary mt-3">
+            Send Advertising Packet
           </button>
-        </li>
-      </ul>
-
-      <div class="tab-content mt-3" id="modeTabsContent">
-        <!-- Replace this section in your <body> where Builder Mode UI exists -->
-        <div
-          class="tab-pane fade show active"
-          id="builder"
-          role="tabpanel"
-          aria-labelledby="builder-tab"
-        >
-          <label for="type">Type (1 byte)</label>
-          <select class="form-select" id="type">
-            <option value="01">01 - Flags</option>
-            <option value="02">02 - Incomplete List of 16-bit UUIDs</option>
-            <option value="03">03 - Complete List of 16-bit UUIDs</option>
-            <option value="04">04 - Incomplete List of 32-bit UUIDs</option>
-            <option value="05">05 - Complete List of 32-bit UUIDs</option>
-            <option value="06">06 - Incomplete List of 128-bit UUIDs</option>
-            <option value="07">07 - Complete List of 128-bit UUIDs</option>
-            <option value="08">08 - Shortened Local Name</option>
-            <option value="09">09 - Complete Local Name</option>
-            <option value="0A">0A - Tx Power Level</option>
-            <option value="0D">0D - Class of Device</option>
-            <option value="0E">0E - Simple Pairing Hash C-192</option>
-            <option value="0F">0F - Simple Pairing Randomizer R-192</option>
-            <option value="10">10 - Device ID / TK Value</option>
-            <option value="11">11 - OOB Flags</option>
-            <option value="12">12 - Conn Interval Range</option>
-            <option value="14">14 - 16-bit UUID Solicitation</option>
-            <option value="15">15 - 128-bit UUID Solicitation</option>
-            <option value="16">16 - Service Data (16-bit UUID)</option>
-            <option value="17">17 - Public Target Address</option>
-            <option value="18">18 - Random Target Address</option>
-            <option value="19">19 - Appearance</option>
-            <option value="1A">1A - Advertising Interval</option>
-            <option value="1B">1B - BLE Address</option>
-            <option value="1C">1C - LE Role</option>
-            <option value="1D">1D - Pairing Hash C-256</option>
-            <option value="1E">1E - Pairing Randomizer R-256</option>
-            <option value="1F">1F - 32-bit UUID Solicitation</option>
-            <option value="20">20 - Service Data (32-bit UUID)</option>
-            <option value="21">21 - Service Data (128-bit UUID)</option>
-            <option value="22">22 - SC Confirm Value</option>
-            <option value="23">23 - SC Random Value</option>
-            <option value="24">24 - URI</option>
-            <option value="25">25 - Indoor Positioning</option>
-            <option value="26">26 - Transport Discovery</option>
-            <option value="27">27 - LE Features</option>
-            <option value="28">28 - Channel Map Update</option>
-            <option value="29">29 - Mesh PB-ADV</option>
-            <option value="2A">2A - Mesh Message</option>
-            <option value="2B">2B - Mesh Beacon</option>
-            <option value="2C">2C - BIGInfo</option>
-            <option value="2D">2D - Broadcast Code</option>
-            <option value="2E">2E - Resolvable Set ID</option>
-            <option value="2F">2F - Long Adv Interval</option>
-            <option value="30">30 - Broadcast Name</option>
-            <option value="31">31 - Encrypted Adv Data</option>
-            <option value="32">32 - PA Response Timing</option>
-            <option value="34">34 - ESL</option>
-            <option value="3D">3D - 3D Info</option>
-            <option value="FF" selected>FF - Manufacturer Specific Data</option>
-          </select>
-
-          <small class="form-text text-muted"
-            >Common values: FF = Manufacturer Specific, 09 = Complete Local
-            Name</small
+          <button
+            id="clearScanBtn"
+            class="btn btn-danger mt-3 ms-2"
+            style="display: none"
           >
+            Clear Scan Response
+          </button>
 
-          <label for="manufacturer"
-            >Manufacturer ID (2 bytes - big endian)</label
-          >
-          <input
-            class="form-control"
-            type="text"
-            id="manufacturer"
-            placeholder="e.g., 075B (Smart Sensor Devices)"
-          />
-
-          <label for="custom">Custom Data (Hex pairs)</label>
-          <input
-            class="form-control"
-            type="text"
-            id="custom"
-            placeholder="e.g., 01020304"
-          />
-          <label class="mt-3">Advertising Packet Preview:</label>
-          <pre id="preview" class="bg-light p-2 border rounded">--</pre>
+          <pre id="output"></pre>
         </div>
+        <div class="col-md-3 offset-md-1">
+          <div class="card product-card text-center mb-4">
+            <div class="card-header fw-bold">Order BleuIO</div>
+            <div class="card-body">
+              <h2 class="card-title">BleuIO Pro</h2>
+              <h3 class="text-primary fw-bold">$35.00</h3>
+              <img
+                src="https://smartsensordevices.com/wp-content/uploads/2024/09/bleuio-pro-blue-with-logo.png"
+                alt="BleuIO Dongle"
+                class="product-img w-75"
+              />
+            </div>
+            <div class="card-footer p-0">
+              <a
+                href="http://bleuio.com/bluetooth-low-energy-usb-ssd025.php"
+                target="_blank"
+                class="btn btn-warning w-100 btn-buy"
+                >Buy Now</a
+              >
+            </div>
+          </div>
 
-        <div
-          class="tab-pane fade"
-          id="raw"
-          role="tabpanel"
-          aria-labelledby="raw-tab"
-        >
-          <label for="rawInput"
-            >Full advertising payload (colon-separated hex)</label
-          >
-          <input
-            class="form-control"
-            type="text"
-            id="rawInput"
-            placeholder="e.g., 07:FF:5B:07:01:02:03:04"
-          />
+          <div class="card product-card text-center">
+            <div class="card-body">
+              <h2 class="card-title">BleuIO</h2>
+              <h3 class="text-primary fw-bold">$24.99</h3>
+              <img
+                src="https://www.bleuio.com/blog/wp-content/themes/bleuio/images/bleuio_product_order_now1.png"
+                alt="BleuIO Dongle"
+                class="product-img w-75"
+              />
+            </div>
+            <div class="card-footer p-0">
+              <a
+                href="http://bleuio.com/bluetooth-low-energy-usb-ssd005.php"
+                target="_blank"
+                class="btn btn-warning w-100 btn-buy"
+                >Buy Now</a
+              >
+            </div>
+          </div>
         </div>
       </div>
-
-      <button id="sendBtn" class="btn btn-primary mt-3">
-        Send Advertising Packet
-      </button>
-      <button
-        id="clearScanBtn"
-        class="btn btn-danger mt-3 ms-2"
-        style="display: none"
-      >
-        Clear Scan Response
-      </button>
-
-      <pre id="output"></pre>
     </div>
     <script>
       let port, writer, reader;
