@@ -66,6 +66,21 @@
             parameters.</em
           >
         </p>
+        <p>
+          Note that certain Types have certain rules and conventions that should
+          be followed, for example Complete Local Name should only be added
+          once, in either the Advertising Data or the Scan Response Data.<br />By
+          default the BleuIO Dongle already has a Complete Local name 'BleuIO'
+          or 'BleuIO Pro' set in the Scan Response Data.<br />Learn more about
+          the different Types from the Assigned Numbers document (2.3 Common
+          Data Types) from Bluetooth SIG:
+          <a
+            class="moz-txt-link-freetext"
+            href="https://www.bluetooth.com/wp-content/uploads/Files/Specification/Assigned_Numbers.html#bookmark43"
+            target="_blank"
+            >https://www.bluetooth.com/wp-content/uploads/Files/Specification/Assigned_Numbers.html#bookmark43</a
+          >
+        </p>
       </div>
       <hr />
       <p>
@@ -214,6 +229,13 @@
       <button id="sendBtn" class="btn btn-primary mt-3">
         Send Advertising Packet
       </button>
+      <button
+        id="clearScanBtn"
+        class="btn btn-danger mt-3 ms-2"
+        style="display: none"
+      >
+        Clear Scan Response
+      </button>
 
       <pre id="output"></pre>
     </div>
@@ -234,9 +256,23 @@
           reader = port.readable.getReader();
           status.textContent = ' Connected to BleuIO';
           output.textContent += 'Connected to serial port.\n';
+          clearScanBtn.style.display = 'inline-block';
           readLoop();
         } catch (e) {
           output.textContent += ' Error connecting: ' + e + '\n';
+        }
+      });
+      const clearScanBtn = document.getElementById('clearScanBtn');
+      clearScanBtn.addEventListener('click', async () => {
+        if (!port || !writer) {
+          alert('Please connect to BleuIO first.');
+          return;
+        }
+        try {
+          await sendCommand('AT+ADVRESP=00');
+          output.textContent += 'Scan Response cleared.\n';
+        } catch (e) {
+          output.textContent += 'Error clearing scan response: ' + e + '\n';
         }
       });
 
